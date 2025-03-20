@@ -19,7 +19,7 @@ A flexible routing framework with integrated real-time logging capabilities.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/Router.git
+   git clone https://github.com/bigyanlabs/Router.git
    cd Router
    ```
 
