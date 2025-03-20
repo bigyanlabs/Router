@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title|default('Flask Router') }}</title>
+    {% if style_url %}
+    <link rel="stylesheet" href="{{ style_url }}">
+    {% endif %}
+</head>
+<body>
+    
+    <style>
+
+    </style>
+    {% if script_url %}
+    <script src="{{ script_url }}"></script>
+    {% endif %}
+    
+</body>
+</html>
