@@ -5,3 +5,4 @@ flake8
 pylint
 autopep8
 pre-commit
+watchdog

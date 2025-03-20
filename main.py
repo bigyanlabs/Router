@@ -2,23 +2,40 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+from core.logger import log_request, log_error, log_warning, log_info, log_debug, SESSION_ID
+
+log_info(f"Starting Flask server with session ID: {SESSION_ID}")
+
 from flask import Flask, jsonify, request, session
 app = Flask(__name__, 
     static_folder="routes",  
     static_url_path="",
     template_folder="routes"
 )
+
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "fallback_secret")
 debug_mode = os.getenv("DEBUG", "False").lower() == "true"
 port = int(os.getenv("PORT", 5000))
 
-from core.logger import log_error
-from core.router import ROUTES_DIR, register_routes
+log_debug(f"Flask configuration: debug={debug_mode}, port={port}")
+log_debug(f"Static folder: {app.static_folder}")
+log_debug(f"Template folder: {app.template_folder}")
+
+@app.before_request
+def log_before_request():
+    if not request.path.startswith(('/static/', '/favicon.ico')):
+        log_debug(f"Request received: {request.method} {request.path} from {request.remote_addr}")
+
+@app.after_request
+def log_after_request(response):
+    if not request.path.startswith(('/static/', '/favicon.ico')):
+        log_request(request.path, request.method, response.status_code)
+    return response
+
+from core.router import register_routes
 from core.engine import setup
 
-
 setup(app)
-
 register_routes(app)
 
 @app.errorhandler(404)

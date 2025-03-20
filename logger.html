@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Viewer</title>
+    <link rel="stylesheet" href="viewer/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Log Files</h2>
+                <button id="refresh-files" title="Refresh file list">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="search-container">
+                <input type="text" id="file-search" placeholder="Filter files...">
+            </div>
+            <div class="file-list" id="file-list">
+                <!-- Files will be loaded here -->
+                <div class="loading">Loading files...</div>
+            </div>
+        </aside>
+
+        <!-- Main content area -->
+        <main class="main-content">
+            <div class="toolbar">
+                <div class="file-info">
+                    <h1 id="current-file">Log Viewer</h1>
+                    <span id="file-stats"></span>
+                </div>
+                <div class="toolbar-actions">
+                    <div class="search-container">
+                        <input type="text" id="log-search" placeholder="Search logs...">
+                        <div class="search-results" id="search-results"></div>
+                    </div>
+                    <div class="filter-container">
+                        <button class="filter-btn all active" data-level="all">All</button>
+                        <button class="filter-btn info" data-level="info">Info</button>
+                        <button class="filter-btn debug" data-level="debug">Debug</button>
+                        <button class="filter-btn warning" data-level="warning">Warning</button>
+                        <button class="filter-btn error" data-level="error">Error</button>
+                    </div>
+                    <button id="download-btn" title="Download log file" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                    </button>
+                    <button id="auto-scroll" title="Auto-scroll to new logs" class="active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 3zm4 8a4 4 0 0 1-8 0 .5.5 0 0 1 1 0 3 3 0 1 0 6 0 .5.5 0 0 1 1 0z"/>
+                        </svg>
+                    </button>
+                    <button id="clear-logs" title="Clear display">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="log-container" id="log-container">
+                <div class="welcome-message">
+                    <div class="welcome-icon">📊</div>
+                    <h2>Welcome to Log Viewer</h2>
+                    <p>Select a log file from the sidebar to start viewing logs.</p>
+                    <p>Real-time logs will appear here as your application generates them.</p>
+                </div>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-text" id="status-text">Ready</div>
+                <div class="entry-counter" id="entry-counter">0 entries</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Connection status indicator -->
+    <div id="connection-status" class="connection-status connected">
+        <span class="status-icon">●</span>
+        <span class="status-text">Connected</span>
+    </div>
+
+    <!-- Templates -->
+    <template id="log-entry-template">
+        <div class="log-entry">
+            <div class="log-entry-header">
+                <span class="log-timestamp"></span>
+                <span class="log-level"></span>
+                <span class="log-file"></span>
+            </div>
+            <div class="log-message"></div>
+        </div>
+    </template>
+    
+    <template id="file-item-template">
+        <div class="file-item">
+            <div class="file-name"></div>
+            <div class="file-info">
+                <span class="file-size"></span>
+                <span class="file-date"></span>
+            </div>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script src="viewer/script.js"></script>
+</body>
+</html>
