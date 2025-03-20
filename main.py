@@ -2,9 +2,13 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from core.logger import log_request, log_error, log_warning, log_info, log_debug, SESSION_ID
+from core.logger import (
+    log_info, log_error, log_debug, 
+    log_request, SESSION_ID, IS_NEW_SESSION
+)
 
-log_info(f"Starting Flask server with session ID: {SESSION_ID}")
+if IS_NEW_SESSION:
+    log_info(f"Starting Flask server with session ID: {SESSION_ID}")
 
 from flask import Flask, jsonify, request, session
 app = Flask(__name__, 
@@ -79,4 +83,9 @@ def logout():
     return jsonify({"success": True, "message": "Logged out"})
 
 if __name__ == "__main__":
-    app.run(debug=debug_mode, port=port)
+    log_info(f"Starting Flask server on port {port} (debug={debug_mode})")
+    try:
+        app.run(host='0.0.0.0', debug=debug_mode, port=port, use_reloader=True)
+    except Exception as e:
+        log_error(f"Error starting Flask server: {e}")
+        raise

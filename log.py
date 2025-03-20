@@ -64,7 +64,7 @@ class LogFileHandler(FileSystemEventHandler):
         """Process log content and broadcast to clients"""
         log_name = os.path.basename(log_file)
         
-        # Process entries
+        
         entries = []
         for line in content.splitlines():
             if not line.strip():
@@ -72,12 +72,11 @@ class LogFileHandler(FileSystemEventHandler):
                 
             entry = {"raw": line, "file": log_name}
             
-            # Parse timestamp
+           
             timestamp_match = line[:19] if len(line) >= 19 else None
             if timestamp_match:
                 entry["timestamp"] = timestamp_match
             
-            # Parse log level
             if " - [INFO] - " in line:
                 entry["level"] = "info"
                 entry["message"] = line.split(" - [INFO] - ", 1)[1]
