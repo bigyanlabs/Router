@@ -1,6 +1,6 @@
 # Flask Router
 
-A flexible routing framework with integrated real-time logging capabilities.
+A flexible and scalable routing framework with seamlessly integrated real-time logging capabilities for efficient monitoring and debugging.
 
 ## Table of Contents
 1. Installation
