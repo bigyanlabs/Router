@@ -7,13 +7,14 @@ A flexible routing framework with integrated real-time logging capabilities.
 2. Quick Start
 3. Project Structure
 4. Core Features
+   - Real-time dashboard
    - Router System
    - Session-based Logging
    - Real-time Log Viewer
-5. Configuration
-6. API Reference
-7. Development Guide
-8. Troubleshooting
+6. Configuration
+7. API Reference
+8. Development Guide
+9. Troubleshooting
 
 ## Installation
 
